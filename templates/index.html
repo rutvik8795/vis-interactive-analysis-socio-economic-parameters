@@ -1,0 +1,873 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>CSE564 Final Project</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <link rel="shortcut icon" href="images/favicon.png">
+
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
+    <link rel="stylesheet" href="/static/styles/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="/static/styles/css/parcoords.css">
+	<link rel="stylesheet" type="text/css" href="/static/styles/css/percent-circle.css">
+    <style>
+    #view-source {
+      position: fixed;
+      display: block;
+      right: 0;
+      bottom: 0;
+      margin-right: 40px;
+      margin-bottom: 40px;
+      z-index: 900;
+    }
+	
+	/* set the CSS */
+
+	.bar { fill: steelblue; }
+
+	.border {
+		border:1px solid black;
+	}
+
+	.tile {
+		border:1px solid black;
+		width:50%;
+		min-height:100px;
+		float:left;
+	}
+
+	.tip {
+		padding:4px;
+		background:white;
+		border-radius:6px;
+	}
+
+	.state{
+		fill: none;
+		stroke: #a9a9a9;
+		stroke-width: 1;
+	}
+
+	.state:hover{
+		fill-opacity:0.5;
+	}
+
+	#tooltip {   
+		position: absolute;           
+		margin: 10px;
+		font: 12px sans-serif;        
+		border: 1px;      
+		pointer-events: none;         
+	}
+
+	#tooltip h4{
+		margin:0;
+		font-size:18px;
+		color: plum;
+	}
+
+	#tooltip{
+		position: absolute;           
+		margin: 10px;
+		font: 14px sans-serif;        
+		pointer-events: none;   
+		background:rgba(0,0,0,0.9);
+		border:1px solid grey;
+		border-radius:5px;
+		width:auto;
+		padding:4px;
+		color:white;
+		opacity:0;
+	}
+	#tooltip table{
+		table-layout:fixed;
+	}
+
+	#tooltip tr td{
+		padding:0;
+		margin:0;
+	}
+
+	#tooltip tr td:nth-child(1){
+		width:50px;
+	}
+
+	#tooltip tr td:nth-child(2){
+		text-align:center;
+	}
+
+    .axis--grid .domain {
+        fill: #ddd;
+        stroke: none;
+    }
+
+    .axis--x .domain,
+    .axis--grid .tick line {
+        stroke: #fff;
+    }
+
+    .axis--grid .tick--minor line {
+        stroke-opacity: .5;
+    }
+	
+	.line {
+		fill: none;
+		stroke: steelblue;
+		stroke-width: 2px;
+	}
+	
+	.infotip {
+		position: relative;
+		display: inline-block;
+		cursor:pointer;
+	}
+
+	.infotip .infotiptext {
+		visibility: hidden;
+		width: 120px;
+		background-color: #555;
+		color: #fff;
+		text-align: center;
+		border-radius: 6px;
+		padding: 5px 0;
+		position: absolute;
+		z-index: 1;
+		bottom: 125%;
+		left: 50%;
+		margin-left: -60px;
+		opacity: 0;
+		transition: opacity 0.3s;
+	}
+
+	.infotip .infotiptext::after {
+		content: "";
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		margin-left: -5px;
+		border-width: 5px;
+		border-style: solid;
+		border-color: #555 transparent transparent transparent;
+	}
+
+	.infotip:hover .infotiptext {
+		visibility: visible;
+		opacity: 1;
+	}
+	.bar {
+            fill: steelblue;
+        }
+	
+	.d3-tip {
+      line-height: 1;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+ 
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+ 
+    /* Style northward tooltips specifically */
+    .d3-tip.n:after {
+      margin: -2px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+	
+	.line {
+	fill: none;
+	stroke: #EF5285;
+	stroke-width: 2px;
+	}
+    </style>
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">United States Socio-Economic Parameters Interactive Dashboard</span>
+          <div class="mdl-layout-spacer"></div>
+        </div>
+      </header>
+      <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+        <header class="demo-drawer-header">
+          <img src="/static/images/Socioeconomics.jpg" class="demo-avatar">
+          <div class="demo-avatar-dropdown">
+            <span>Navigation Menu</span>
+            <div class="mdl-layout-spacer"></div>
+          </div>
+        </header>
+        <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
+          <a class="mdl-navigation__link" href="{{ url_for('data_maps') }}">Maps and Basic</a>
+		  <a class="mdl-navigation__link" href="{{ url_for('radar_chart') }}">Radar Chart</a>
+          <a class="mdl-navigation__link" href="{{ url_for('scatterplot') }}">Scatterplot</a>
+		  <a class="mdl-navigation__link" href="{{ url_for('percent_circles') }}">Percentage Circles</a>
+          <div class="mdl-layout-spacer"></div>
+        </nav>
+      </div>
+      <main class="mdl-layout__content mdl-color--grey-100">
+	  <div id="tooltip"></div>
+	  <div class="year-chart" align="center" id="year-chart-id"></div>	
+	  <select id="parameters">
+		<option value="rent_mean">Rent</option>
+		<option value="hs_degree">High School Degree</option>
+		<option value="debt">Debt</option>
+		<option value="ALand">Area of Land</option>
+		<option value="AWater">Area of Water</option>
+		<option value="pop">Population</option>
+		<option value="second_mortgage">Second Mortgage</option>
+		<option value="home_equity">Home Equity</option>
+		<option value="hc_mean">Home Monthly Cost</option>
+	  </select>
+	  <div id="barSvgDiv">
+	  <svg id="barSvg" width="600" height="500"></svg>
+	  </div>
+	  <div id="docsChart"></div>
+        <div class="mdl-grid demo-content">
+
+        </div>
+      </main>
+    </div>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="position: fixed; left: -1000px; height: -1000px;">
+        <defs>
+          <mask id="piemask" maskContentUnits="objectBoundingBox">
+            <circle cx=0.5 cy=0.5 r=0.49 fill="white" />
+            <circle cx=0.5 cy=0.5 r=0.40 fill="black" />
+          </mask>
+          <g id="piechart">
+            <circle cx=0.5 cy=0.5 r=0.5 />
+            <path d="M 0.5 0.5 0.5 0 A 0.5 0.5 0 0 1 0.95 0.28 z" stroke="none" fill="rgba(255, 255, 255, 0.75)" />
+          </g>
+        </defs>
+      </svg>
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 250" style="position: fixed; left: -1000px; height: -1000px;">
+        <defs>
+          <g id="chart">
+            <g id="Gridlines">
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="27.3" x2="468.3" y2="27.3" />
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="66.7" x2="468.3" y2="66.7" />
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="105.3" x2="468.3" y2="105.3" />
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="144.7" x2="468.3" y2="144.7" />
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="184.3" x2="468.3" y2="184.3" />
+            </g>
+            <g id="Numbers">
+              <text transform="matrix(1 0 0 1 485 29.3333)" fill="#888888" font-family="'Roboto'" font-size="9">500</text>
+              <text transform="matrix(1 0 0 1 485 69)" fill="#888888" font-family="'Roboto'" font-size="9">400</text>
+              <text transform="matrix(1 0 0 1 485 109.3333)" fill="#888888" font-family="'Roboto'" font-size="9">300</text>
+              <text transform="matrix(1 0 0 1 485 149)" fill="#888888" font-family="'Roboto'" font-size="9">200</text>
+              <text transform="matrix(1 0 0 1 485 188.3333)" fill="#888888" font-family="'Roboto'" font-size="9">100</text>
+              <text transform="matrix(1 0 0 1 0 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">1</text>
+              <text transform="matrix(1 0 0 1 78 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">2</text>
+              <text transform="matrix(1 0 0 1 154.6667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">3</text>
+              <text transform="matrix(1 0 0 1 232.1667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">4</text>
+              <text transform="matrix(1 0 0 1 309 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">5</text>
+              <text transform="matrix(1 0 0 1 386.6667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">6</text>
+              <text transform="matrix(1 0 0 1 464.3333 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">7</text>
+            </g>
+            <g id="Layer_5">
+              <polygon opacity="0.36" stroke-miterlimit="10" points="0,223.3 48,138.5 154.7,169 211,88.5
+              294.5,80.5 380,165.2 437,75.5 469.5,223.3 	"/>
+            </g>
+            <g id="Layer_4">
+              <polygon stroke-miterlimit="10" points="469.3,222.7 1,222.7 48.7,166.7 155.7,188.3 212,132.7
+              296.7,128 380.7,184.3 436.7,125 	"/>
+            </g>
+          </g>
+        </defs>
+      </svg>
+      <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+	     <!-- load the d3.js library -->
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
+    <script src='https://npmcdn.com/babel-core@5.8.34/browser.min.js'></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
+	<!-- US States -->
+	<script src="{{ url_for('static',filename='styles/js/uStates.js') }}"></script>
+	<script src="{{ url_for('static',filename='styles/js/parcoords-master/d3_v4.parcoords.js') }}"></script>
+	<script src="{{ url_for('static',filename='styles/js/d3-tip.js') }}"></script>
+	  <script lang="babel" type='text/babel'>
+		let toggleVar = 1;
+		let yearStart = new Date(1966, 1, 1);
+		let yearEnd = new Date(2018, 1, 1);
+
+		let data;
+		data = {{ data.init_data | safe }};
+
+		console.log(data);
+
+		const getData = function(start, end){
+			var postData = $.ajax({
+				url: 'getStateDataByYear',
+				type: 'POST',
+				data: JSON.stringify({'s':start.getFullYear(), 'e':end.getFullYear()}),
+				contentType: 'application/json;charset=UTF-8',
+				async: false
+			}).responseText;
+
+			return postData;
+		};
+		
+		const tooltipHtml = function (n, parameter){	/* function to create html content string in tooltip div. */
+			var parameterStr = document.getElementById("parameters");
+			var parameterVal = parameterStr.options[parameterStr.selectedIndex].value;
+			if(isNaN(parameter)){
+				parameter = 0;
+			}
+			if(parameterVal == "rent_mean"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>Mean Rent:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			else if(parameterVal == "hs_degree"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>High School Degree Mean:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			else if(parameterVal == "debt"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>Debt Mean:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			else if(parameterVal == "ALand"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>Area of Land Mean:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			else if(parameterVal == "AWater"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>Area of Water Mean:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			else if(parameterVal == "pop"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>Population Mean:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			else if(parameterVal == "second_mortgage"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>Second Mortgage Mean:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			else if(parameterVal == "home_equity"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>Home Equity Mean:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			else if(parameterVal == "hc_mean"){
+				return "<h4>"+n+"</h4><table>"+
+				"<tr><td>Home Monthly Cost Mean:&nbsp;</td><td>"+(parameter)+"</td></tr></table>";
+			}
+			
+		};
+		console.log("Hello");
+		window.onload=function(){
+		document.getElementById ("parameters").addEventListener ("click", drawVis, false);
+		}
+		const drawBarUSChart = function (data) {
+		document.getElementById("year-chart-id").innerHTML = "";
+			var parameterStr = document.getElementById("parameters");
+			console.log(parameterStr);
+			var parameterVal = parameterStr.options[parameterStr.selectedIndex].value;
+			console.log(parameterVal);
+			
+			let us_state_data = [];
+			let parameter = "";
+			if(parameterVal == "rent_mean"){
+				console.log("Hello Rent");
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.rent_mean});
+				});	
+			}
+			else if(parameterVal == "hs_degree"){
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.hs_degree});  
+				});
+			}
+			else if(parameterVal == "debt"){
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.debt});  
+				});
+			}
+			else if(parameterVal == "ALand"){
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.ALand}); 
+				});				
+			}
+			else if(parameterVal == "AWater"){
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.AWater}); 
+				});
+			}
+			else if(parameterVal == "pop"){
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.pop});
+				});
+			}
+			else if(parameterVal == "second_mortgage"){
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.second_mortgage});
+				});
+			}
+			else if(parameterVal == "home_equity"){
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.home_equity}); 
+				});
+			}
+			else if(parameterVal == "hc_mean"){
+				data.forEach(function (d) {
+				us_state_data.push({"state": d.state, "parameter": +d.hc_mean});
+				});
+			}
+			
+			
+            //Append SVG to the plotchart div
+            const svg = d3.select(".year-chart")
+                        .append('svg')
+                        .attr("class", "barchart")
+						.attr("id", "statesvg")
+                        .attr('width', 930)
+                        .attr('height', 600);
+			
+
+
+
+			//to find max value in an array
+			var sampleData = [];	/* Sample random data. */		
+			// Log Scale, starting number had to be greater than or equal to 1 to not break color coding
+			let start = 0;
+			let end = 0;
+			console.log("start");
+			if(parameterVal == "hs_degree" || parameterVal == "debt" || parameterVal == "second_mortgage" || parameterVal == "home_equity"){
+			start = d3.max([1,d3.min(us_state_data, function(d) {console.log(d.rent_mean);return (d.parameter*100); })]);
+			end = 1 + d3.max(us_state_data, function (d) { return (d.parameter*100) });
+			}
+			else{
+			start = d3.max([1,d3.min(us_state_data, function(d) {console.log(d.rent_mean);return d.parameter; })]);
+			end = 1 + d3.max(us_state_data, function (d) { return d.parameter });
+			}
+			console.log(start);
+			console.log(end);
+			console.log("end");
+
+			const logScale = d3.scaleLog().domain([start, end])
+			const colorScaleLog = d3.scaleSequential(
+				(d) => {
+					return d3.interpolatePurples(logScale(d))
+				}
+			);
+			
+			const bandScale = d3.scaleLog().domain([start, end])
+			const colorScale = d3.scaleSequential(
+				(d) => {
+					return d3.interpolatePurples(bandScale(d))
+				}
+			);
+	
+			us_state_data.forEach(function(d){
+				uStatePaths.forEach(function (s) {
+					if (d.state == s.n) { 
+						d.n = s.n;
+						d.d = s.d;
+						d.id = s.id;
+					}
+				});
+				
+				parameter = +d.parameter;
+				
+				if(parameterVal == "hs_degree" || parameterVal == "debt" || parameterVal == "second_mortgage" || parameterVal == "home_equity"){
+					parameter = parameter*100;
+					sampleData.push({
+				   n: d.n,
+				   state: d.state,
+				   parameter: parameter,
+				   path: d.d,
+				   color: colorScale(parameter),
+				   color2:d3.interpolate("#000000", "#ffffff")(Math.round(parameter))});
+				}
+				else{
+				sampleData.push({
+				   n: d.n,
+				   state: d.state,
+				   parameter: Math.round(parameter),
+				   path: d.d,
+				   color: colorScaleLog(parameter),
+				   color2:d3.interpolate("#000000", "#ffffff")(Math.round(parameter)/100)});
+			}});
+			
+			
+			/* draw states on id #statesvg */	
+			uStates.draw("#statesvg", sampleData, tooltipHtml);
+			d3.select(self.frameElement).style("height", "600px");
+				
+        };
+
+	const drawBarGraph = function(){
+	document.getElementById("barSvg").innerHTML = '';
+    var svg = d3.select("#barSvgDiv > svg"),
+        margin = 200,
+        width = svg.attr("width") - margin,
+        height = svg.attr("height") - margin
+
+    svg.append("text")
+       .attr("transform", "translate(100,0)")
+       .attr("x", 50)
+       .attr("y", 50)
+       .attr("font-size", "24px")
+
+    var xScale = d3.scaleBand().range([0, width]).padding(0.4),
+        yScale = d3.scaleLinear().range([height, 0]);
+
+    var g = svg.append("g")
+               .attr("transform", "translate(" + 100 + "," + 100 + ")");
+
+    d3.csv("static/data/parcoord_state_group.csv", function(error, data) {
+        if (error) {
+            throw error;
+        }
+		
+		var parameterStr = document.getElementById("parameters");
+			var parameterVal = parameterStr.options[parameterStr.selectedIndex].value;
+		
+		if(parameterVal == "rent_mean"){
+		var tool_tip = d3.tip()
+		.attr("class", "d3-tip")
+		.offset([-8, 0])
+		.html(function(d) { return "Mean Rent: " + d.rent_mean; });
+		svg.call(tool_tip);
+		
+		xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.rent_mean; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.rent_mean); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.rent_mean); })
+		 .on('mouseover', tool_tip.show)
+		 .on('mouseout', tool_tip.hide);
+		}
+		else if(parameterVal == "hs_degree"){
+			xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.hs_degree; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.hs_degree); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.hs_degree); });
+		}
+		else if(parameterVal == "debt"){
+			xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.debt; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.debt); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.debt); });
+		}
+		else if(parameterVal == "ALand"){
+			xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.ALand; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.ALand); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.ALand); });
+		}
+		else if(parameterVal == "AWater"){
+			xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.AWater; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.AWater); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.AWater); });
+		}
+		else if(parameterVal == "pop"){
+			xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.pop; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.pop); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.pop); });
+		}
+		else if(parameterVal == "second_mortgage"){
+			xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.second_mortgage; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.second_mortgage); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.second_mortgage); });
+		}
+		else if(parameterVal == "home_equity"){
+			xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.home_equity; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.home_equity); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.home_equity); });
+		}
+		else if(parameterVal == "hc_mean"){
+			xScale.domain(data.map(function(d) { return d.state; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.hc_mean; })]);
+		
+		     g.selectAll(".bar")
+         .data(data)
+         .enter().append("rect")
+         .attr("class", "bar")
+         .attr("x", function(d) { return xScale(d.state); })
+         .attr("y", function(d) { return yScale(d.hc_mean); })
+         .attr("width", xScale.bandwidth())
+         .attr("height", function(d) { return height - yScale(d.hc_mean); });
+		}
+         
+        g.append("g")
+         .attr("transform", "translate(0," + height + ")")
+         .call(d3.axisBottom(xScale))
+          .selectAll("text") 
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-65)"); 
+
+
+        g.append("g")
+         .call(d3.axisLeft(yScale).tickFormat(function(d){
+             return d;
+         })
+         .ticks(10))
+         .append("text")
+         .attr("transform", "rotate(-90)")
+         .attr("y", 6)
+         .attr("dy", "-5.1em")
+         .attr("text-anchor", "end")
+         .attr("stroke", "black")
+         .text("Parameter");
+
+   
+    });
+	};
+	
+	const drawLineChart = function(){
+	
+	// Set the margins
+var margin = {top: 60, right: 100, bottom: 20, left: 80},
+  width = 850 - margin.left - margin.right,
+  height = 370 - margin.top - margin.bottom;
+
+// Set the ranges
+
+var x = d3.scaleBand().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+
+
+// Create the svg canvas in the "graph" div
+var svg = d3.select("#graph")
+        .append("svg")
+        .style("width", width + margin.left + margin.right + "px")
+        .style("height", height + margin.top + margin.bottom + "px")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform","translate(" + margin.left + "," + margin.top + ")")
+        .attr("class", "svg");
+
+// Import the CSV data
+d3.csv("static/data/parcoord_state_group.csv", function(error, data) {
+  if (error) throw error;
+  
+  // Scale the range of the data
+  x.domain(d3.extent(data, function(d) { return d.state; }));
+  y.domain([0, d3.max(data, function(d) { return d.rent_mean; })]);
+  
+  // Set up the x axis
+  var xaxis = svg.append("g")
+       .attr("transform", "translate(0," + height + ")")
+       .attr("class", "x axis")
+       .call(d3.axisBottom(x))
+          .selectAll("text") 
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-65)"); 
+
+  // Add the Y Axis
+   var yaxis = svg.append("g")
+       .attr("class", "y axis")
+       .call(d3.axisLeft(y)
+          .ticks(5)
+          .tickSizeInner(0)
+          .tickPadding(6)
+          .tickSize(0, 0));
+
+ // yaxis.select(".domain").style("display","none")
+  
+  // Add a label to the y axis
+  svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - 60)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Parameter")
+        .attr("class", "y axis label");
+  
+  // Define the line
+	var valueLine = d3.line()
+    .x(function(d) { return x(d.state); })
+    .y(function(d) { return y(+d.rent_mean); })
+	
+  // Draw the line
+  svg.append("path")
+      .data([data])
+      .attr("class", "line")
+      .attr("d", valueLine);
+
+      console.log(data)
+      console.log([data])
+})
+};
+
+const drawPercentCircle = function(){
+var width = 135,
+    height = 135,
+    twoPi = 2 * Math.PI,
+    progress = 0,
+    allocated = 2000000,
+    total = 4300000,
+    formatPercent = d3.format(".0%");
+
+var arc = d3.svg.arc()
+    .startAngle(0)
+    .innerRadius(52)
+    .outerRadius(66);
+
+var svg = d3.select("#docsChart").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+var meter = svg.append("g")
+    .attr("class", "funds-allocated-meter");
+
+meter.append("path")
+    .attr("class", "background")
+    .attr("d", arc.endAngle(twoPi));
+
+var foreground = meter.append("path")
+    .attr("class", "foreground");
+
+var percentComplete = meter.append("text")
+    .attr("text-anchor", "middle")
+    .attr("class", "percent-complete")
+    .attr("dy", "0em");
+
+var description = meter.append("text")
+    .attr("text-anchor", "middle")
+    .attr("class", "description")
+    .attr("dy", "2.3em")
+    .text("Total Complete");
+
+var i = d3.interpolate(progress, allocated / total);
+
+ d3.transition().duration(1000).tween("progress", function() {
+  return function(t) {
+    progress = i(t);
+    foreground.attr("d", arc.endAngle(twoPi * progress));
+    percentComplete.text(formatPercent(progress));
+  };
+});
+};
+		const drawVis = function(toggleIndex, s, e) {
+			drawBarUSChart(data);
+			drawBarGraph();
+			drawPercentCircle();
+        };
+		
+		drawVis(toggleVar, yearStart, yearEnd)
+        
+    </script>
+  </body>
+</html>
